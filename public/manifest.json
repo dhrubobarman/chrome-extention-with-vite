@@ -1,0 +1,22 @@
+{
+    "manifest_version": 3,
+    "version": "1.0.0",
+    "name": "Chrome Extension",
+    "icons": {
+        "128": "vite.svg",
+        "32": "vite.svg",
+        "48": "vite.svg"
+    },
+    "action": {
+        "default_popup": "index.html",
+        "default_icon": "vite.svg"
+    },
+    "permissions": [
+        "tabs",
+        "scripting"
+    ],
+    "host_permissions": [
+        "http://*/*",
+        "https://*/*"
+    ]
+}
