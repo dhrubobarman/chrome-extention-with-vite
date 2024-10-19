@@ -12,7 +12,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
+
+// import { toast } from "sonner";
 
 import {
   Card,
@@ -22,17 +23,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { setToken, setUser } from "@/utils/storage";
+import { useStore } from "@/providers/storageProvider";
 
 const FormSchema = z.object({
   email: z.string().email("User email is required"),
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
-type LoginFormProps = {
-  setIsUserLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-};
+export default function LoginForm() {
+  const { dispatch } = useStore();
 
-export default function LoginForm({ setIsUserLoggedIn }: LoginFormProps) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -41,21 +42,24 @@ export default function LoginForm({ setIsUserLoggedIn }: LoginFormProps) {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    setIsUserLoggedIn(true);
-    toast("You submitted the following values:", {
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    // TODO login and setToken
+    try {
+      const exampleToken = JSON.stringify({ email: data.email });
+      const userData = { email: data.email };
+      await setToken(exampleToken);
+      dispatch({ type: "SET_TOKEN", payload: exampleToken });
+      dispatch({ type: "SET_USER_DATA", payload: userData });
+      await setUser(userData);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <Card className="w-[350px]">
+        <Card className="w-[350px] border-none bg-transparent rounded-none shadow-none">
           <CardHeader>
             <CardTitle className="text-xl text-center">Login🔑</CardTitle>
             <CardDescription className="text-center">
@@ -72,7 +76,11 @@ export default function LoginForm({ setIsUserLoggedIn }: LoginFormProps) {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input placeholder="johndoe@mail.com" {...field} />
+                        <Input
+                          className="dark:border-gray-600"
+                          placeholder="johndoe@mail.com"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -86,6 +94,7 @@ export default function LoginForm({ setIsUserLoggedIn }: LoginFormProps) {
                       <FormLabel>Password</FormLabel>
                       <FormControl>
                         <Input
+                          className="dark:border-gray-600"
                           type="password"
                           placeholder="********"
                           {...field}
@@ -104,7 +113,12 @@ export default function LoginForm({ setIsUserLoggedIn }: LoginFormProps) {
             </Button>
             <p className="mt-4 text-sm mx-auto">
               Don't have an account?{" "}
-              <a className="text-blue-500" href="https://www.equip-t.com/">
+              <a
+                className="text-blue-500"
+                href="https://www.equip-t.com/"
+                target="_blank"
+                referrerPolicy="no-referrer"
+              >
                 Register
               </a>
             </p>

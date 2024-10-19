@@ -4,11 +4,14 @@ import App from "./App.tsx";
 
 import "./index.css";
 import Layout from "@/Layout.tsx";
+import { StorageProvider } from "@/providers/storageProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Layout>
-      <App />
-    </Layout>
+    <StorageProvider>
+      <Layout>
+        <App />
+      </Layout>
+    </StorageProvider>
   </StrictMode>
 );
