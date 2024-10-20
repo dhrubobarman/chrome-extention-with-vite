@@ -3,9 +3,13 @@ import { getCurrentTabStatus, setCurrentTabStatus } from "@/utils/storage";
 import { Save } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { StepData } from "../../../public/capture/main";
-import css from "../../../public/capture/main.css?raw";
+// import css from "../../../public/capture/main.css?raw";
+import { useTheme } from "next-themes";
+import { sendThemeSignal } from "@/utils/helper";
+import { Theme } from "@/types";
 
 const StartCapture = () => {
+  const { theme } = useTheme();
   const [buttonState, setButtonState] = useState({
     startButton: false,
     stopButton: true,
@@ -91,10 +95,9 @@ const StartCapture = () => {
       target: { tabId: tab.id },
       files: ["capture/main.js"],
     });
-    chrome.scripting.insertCSS({
-      target: { tabId: tab.id },
-      css: css,
-    });
+
+    sendThemeSignal(theme as Theme);
+
     chrome.tabs.sendMessage(tab.id, { action: "start" });
   };
 
@@ -105,10 +108,10 @@ const StartCapture = () => {
     });
     if (!tab.id) return;
 
-    chrome.scripting.removeCSS({
-      target: { tabId: tab.id },
-      css: css,
-    });
+    // chrome.scripting.removeCSS({
+    //   target: { tabId: tab.id },
+    //   css: css,
+    // });
     chrome.tabs.sendMessage(tab.id, { action: "stop" });
   };
 
@@ -119,10 +122,10 @@ const StartCapture = () => {
     });
     if (!tab.id) return;
 
-    chrome.scripting.removeCSS({
-      target: { tabId: tab.id },
-      css: css,
-    });
+    // chrome.scripting.removeCSS({
+    //   target: { tabId: tab.id },
+    //   css: css,
+    // });
     chrome.tabs.sendMessage(tab.id, { action: "sendStepData" });
   };
 
