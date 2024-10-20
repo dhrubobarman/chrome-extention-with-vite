@@ -1,13 +1,6 @@
+import { UserData } from "@/types";
 import { getToken, getUser } from "@/utils/storage";
 import { createContext, useContext, useEffect, useReducer } from "react";
-
-export type UserData = {
-  _id: string;
-  email: string;
-  name: string;
-  avatar: string;
-  role: string;
-};
 
 type StorageProviderProps = {
   children: React.ReactNode;

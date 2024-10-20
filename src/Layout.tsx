@@ -6,7 +6,7 @@ import UserProfile from "@/components/UserProfile";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="capture-extention-ui-theme">
+    <ThemeProvider defaultTheme="dark">
       <div className="w-[374px] min-h-[400px] flex flex-col border dark:bg-[#28292d]">
         <div className="relative mb-3 border-b dark:border-gray-700 p-3">
           <span className="absolute top-3 left-3">

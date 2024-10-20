@@ -1,9 +1,13 @@
-import { StepData } from "@/components/StartCapture/capture/main";
-import css from "@/components/StartCapture/capture/main.css?raw";
 import { Button } from "@/components/ui/button";
-import { getStatus, setData, setStatus, Status } from "@/utils/storage";
+import {
+  getCurrentTabStatus,
+  setCurrentTabStatus,
+  setData,
+} from "@/utils/storage";
 import { Save } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { StepData } from "../../../public/capture/main";
+import css from "../../../public/capture/main.css?raw";
 
 const StartCapture = () => {
   const [buttonState, setButtonState] = useState({
@@ -12,15 +16,36 @@ const StartCapture = () => {
     saveButton: true,
   });
   const [stepData, setStepData] = useState<StepData[]>([]);
+  const [tabId, setTabId] = useState<number | undefined>();
 
   useEffect(() => {
-    getStatus().then((status) => {
-      handleDisableButton(status);
-    });
+    const getActiveTab = async () => {
+      const [tab] = await chrome.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
+      setTabId(tab.id);
+      return tab;
+    };
+    getActiveTab();
   }, []);
 
-  const handleDisableButton = (status: Status | null) => {
+  useEffect(() => {
+    handleDisableButton();
+  }, [tabId]);
+
+  const handleDisableButton = async () => {
+    const status = await getCurrentTabStatus();
+    if (!status) return;
     if (status === null) return;
+
+    if (status === "data") {
+      setButtonState({
+        startButton: false,
+        stopButton: true,
+        saveButton: true,
+      });
+    }
     if (status === "started") {
       setButtonState({
         startButton: true,
@@ -39,11 +64,15 @@ const StartCapture = () => {
 
   const listenForMessage = useCallback(() => {
     chrome.runtime.onMessage?.addListener(async (request) => {
+      if (request.action === "setActiveTabId") {
+        setTabId(request.tabId);
+      }
       if (request.action === "messageFromContent") {
         const { data, response } = request.data;
+        console.log(response);
         if (response) {
-          await setStatus(response);
-          handleDisableButton(response);
+          await setCurrentTabStatus(response);
+          await handleDisableButton();
         }
         if (response === "data") {
           setStepData((prev) => {

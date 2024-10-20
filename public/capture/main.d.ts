@@ -1,95 +1,3 @@
-type ElementData = {
-    tag: string;
-    attributes: Record<string, string>;
-    selector: string | null | undefined;
-    htmlBox: DOMRect;
-    element: HTMLElement;
-    success: boolean;
-};
-type InspectorProps = {
-    onElementClick?: (e: MouseEvent, data: ElementData) => void;
-    update?: (delta: number) => void;
-    startMessage?: string;
-    countdownTimeInSeconds?: number;
-    highlightColor?: string;
-    falseHighlightColor?: string;
-};
-type StepData = {
-    _id: string;
-    title: string;
-    url: string;
-    learned: boolean;
-    description?: string;
-    steps: Step[];
-};
-type Step = {
-    title: string;
-    description?: string;
-    target?: string;
-    _id: string;
-};
-
-declare class CaptureUI {
-    ui: UI;
-    container: HTMLDivElement;
-    collapseButton: HTMLButtonElement;
-    private sidebarDragHandle;
-    private modal;
-    private startButton;
-    stepData: StepData;
-    private modalFooterContainer;
-    started: boolean;
-    private modalContentContainer;
-    private saveButton;
-    private sidebarUl;
-    private resumeButton;
-    listTitle: HTMLInputElement;
-    cardActions: HTMLDivElement;
-    paused: boolean;
-    name: string;
-    onContainerClick: (container: HTMLElement, name: string) => void;
-    constructor(ui: UI, name: string, onContainerClick?: (container: HTMLElement, name: string) => void);
-    private init;
-    initDND(name: string, handleZIndex: (container: HTMLElement, name: string) => void): void;
-    private initInspector;
-    private handleOpenEditModal;
-    private initButtons;
-    private openNameInputDialog;
-    private openCaptureDialog;
-    private updateStepContent;
-    private addListItem;
-    renderStepDataList(data: StepData): void;
-    private removeItemFromStepData;
-    pause(): void;
-    resume(): void;
-    private startCapturing;
-    stopCapturing(): void;
-    private clearModal;
-    private closeModal;
-    private getInputValue;
-    private save;
-}
-
-declare class SavedStepUI {
-    ui: UI;
-    container: HTMLElement;
-    savedSidebarHeader: HTMLDivElement;
-    private savedSidebarUl;
-    private collapseButton;
-    private savedSidebarDragHandle;
-    private stepData;
-    private interval;
-    private retryConnection;
-    name: string;
-    onContainerClick: (container: HTMLElement, name: string) => void;
-    constructor(ui: UI, name: string, onContainerClick?: (container: HTMLElement, name: string) => void, container?: HTMLElement);
-    private init;
-    initDND(name: string, handleZIndex: (container: HTMLElement, name: string) => void): void;
-    private renderStepData;
-    private deleteStepData;
-    fetchData(): Promise<StepData[] | undefined>;
-}
-
 type useIndexedDbProps = {
     /**
      * The name of the IndexedDB database.
@@ -161,16 +69,126 @@ declare class IndexedDb<T> {
     getStoreData(): Promise<T[]>;
 }
 
+type ElementData = {
+    tag: string;
+    attributes: Record<string, string>;
+    selector: string | null | undefined;
+    htmlBox: DOMRect;
+    element: HTMLElement;
+    success: boolean;
+};
+type InspectorProps = {
+    onElementClick?: (e: MouseEvent, data: ElementData) => void;
+    update?: (delta: number) => void;
+    startMessage?: string;
+    countdownTimeInSeconds?: number;
+    highlightColor?: string;
+    falseHighlightColor?: string;
+};
+type StepData = {
+    _id: string;
+    title: string;
+    url: string;
+    learned: boolean;
+    description?: string;
+    steps: Step[];
+};
+type Step = {
+    title: string;
+    description?: string;
+    target?: string;
+    _id: string;
+};
+
+declare class CaptureUI {
+    ui: UI;
+    container: HTMLDivElement;
+    private modal;
+    private startButton;
+    stepData: StepData;
+    private modalFooterContainer;
+    started: boolean;
+    private modalContentContainer;
+    private saveButton;
+    private sidebarUl;
+    private resumeButton;
+    listTitle: HTMLInputElement;
+    cardActions: HTMLDivElement;
+    paused: boolean;
+    name: string;
+    onContainerClick: (container: HTMLElement, name: string) => void;
+    constructor(ui: UI, name: string, onContainerClick?: (container: HTMLElement, name: string) => void);
+    private init;
+    private initInspector;
+    private handleOpenEditModal;
+    private initButtons;
+    private openNameInputDialog;
+    private openCaptureDialog;
+    private updateStepContent;
+    private addListItem;
+    renderStepDataList(data: StepData): void;
+    private removeItemFromStepData;
+    pause(): void;
+    resume(): void;
+    private startCapturing;
+    stopCapturing(): void;
+    private clearModal;
+    private closeModal;
+    private getInputValue;
+    private save;
+}
+
+declare class SavedStepUI {
+    ui: UI;
+    container: HTMLElement;
+    private savedSidebarUl;
+    private stepData;
+    private interval;
+    private retryConnection;
+    name: string;
+    onContainerClick: (container: HTMLElement, name: string) => void;
+    constructor(ui: UI, name: string, onContainerClick?: (container: HTMLElement, name: string) => void, container?: HTMLElement);
+    private init;
+    private renderStepData;
+    private deleteStepData;
+    fetchData(): Promise<StepData[] | undefined>;
+}
+
+type TabsProps = {
+    tabs: TTabs[];
+    container: HTMLElement;
+    tabButtonContainer: HTMLElement;
+};
+type TTabs = {
+    title: string;
+    container: HTMLElement;
+};
+declare class Tabs {
+    tabs: TTabs[];
+    tabButtons: HTMLButtonElement[];
+    container: HTMLElement;
+    tabButtonContainer: HTMLElement;
+    constructor({ tabs, container, tabButtonContainer }: TabsProps);
+    init(): void;
+    showTabAtIndex(index: number): void;
+}
+
 declare class UI {
     inspector: Inspector;
     captureUI: CaptureUI;
     savedStepUI: SavedStepUI;
     indexedDb: IndexedDb<StepData>;
+    card: HTMLDivElement;
+    cardHeader: HTMLDivElement;
+    container: HTMLDivElement;
+    tabButtonContainer: HTMLDivElement;
+    collapseButton: HTMLButtonElement;
+    cardHandle: HTMLButtonElement;
+    tabs: Tabs;
     constructor(inspector: Inspector);
+    init(): void;
     show(): void;
     hide(): void;
-    initDND(): void;
-    handleZIndex(container: HTMLElement, name: string): void;
 }
 
 declare class Elements {
@@ -243,14 +261,6 @@ declare class Inspector {
     private render;
 }
 
-declare function createElement<T extends keyof HTMLElementTagNameMap>(tag: T, attributes?: Partial<HTMLElementTagNameMap[T]>, insertToApp?: string | boolean | HTMLElement): HTMLElementTagNameMap[T];
-
-declare const createButton: ({ innerText, className, container, ...rest }: {
-    innerText: string;
-    className?: string;
-    container?: false | HTMLElement;
-} & Partial<HTMLButtonElement>) => HTMLButtonElement;
-
 declare class Main {
     inspector: Inspector;
     start(): void;
@@ -258,4 +268,4 @@ declare class Main {
     getAllData(): Promise<StepData[] | undefined>;
 }
 
-export { type ElementData, Inspector, type InspectorProps, type Step, type StepData, createButton, createElement, Main as default };
+export { type ElementData, type InspectorProps, type Step, type StepData, Main as default };

@@ -1,12 +1,12 @@
-import { StepData } from "@/components/StartCapture/capture/main";
-import { UserData } from "@/providers/storageProvider";
+import { StepData } from "../../public/capture/main";
+import { UserData } from "@/types";
+import { Status, Theme } from "@/types";
 
-const TOKEN_NAME = "extention-token";
-const STATUS_KEY = "extention-status";
-const STEP_DATA_KEY = "extention-step-data";
-const USER_DATA_KEY = "extention-user-data";
-
-export type Status = "started" | "stoped" | "data";
+const TOKEN_NAME = "capture-extention-token";
+const STATUS_KEY = "capture-extention-status";
+const STEP_DATA_KEY = "capture-extention-step-data";
+const USER_DATA_KEY = "capture-extention-user-data";
+const THEME_KEY = "capture-extention-ui-theme";
 
 export const setToken = async (token: string) => {
   await chrome.storage?.sync.set({ [TOKEN_NAME]: token });
@@ -29,16 +29,6 @@ export const getUser = async (): Promise<UserData | null> => {
   return null;
 };
 
-export const setStatus = async (status: Status) => {
-  await chrome.storage?.sync.set({ [STATUS_KEY]: status });
-};
-export const getStatus = async (): Promise<Status | null> => {
-  const data = await chrome.storage?.sync.get(STATUS_KEY);
-  if (data[STATUS_KEY]) {
-    return data[STATUS_KEY];
-  }
-  return null;
-};
 export const isLoggedIn = async () => {
   return await getToken();
 };
@@ -55,13 +45,42 @@ export const logOut = async () => {
 export const setData = async (data: StepData[]) => {
   await chrome.storage?.sync.set({ [STEP_DATA_KEY]: data });
 };
-// export const getData = async () => {
-//   const data = await chrome.storage?.sync.get(STEP_DATA_KEY);
-//   if (data[STEP_DATA_KEY]) {
-//     return data[STEP_DATA_KEY];
-//   }
-//   return [];
-// };
-// export const clearData = async () => {
-//   await chrome.storage?.sync.remove(STEP_DATA_KEY);
-// };
+
+export const setUserTheme = async (theme: Theme) => {
+  await chrome.storage?.sync.set({ [THEME_KEY]: theme });
+};
+export const getUserTheme = async (): Promise<Theme | null> => {
+  const data = await chrome.storage?.sync.get(THEME_KEY);
+  if (data[THEME_KEY]) {
+    return data[THEME_KEY];
+  }
+  return null;
+};
+
+const getTabsStatusdata = async () => {
+  const data = await chrome.storage?.sync.get(STATUS_KEY);
+  return data ? data[STATUS_KEY] : null;
+};
+
+export const setCurrentTabStatus = async (
+  status: Status,
+  activeTabId?: number
+) => {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  const tabId = activeTabId || tab.id;
+  if (!tabId) return;
+
+  const oldData = await getTabsStatusdata();
+  const newData = { ...oldData, [tabId]: status };
+  await chrome.storage?.sync.set({ [STATUS_KEY]: newData });
+};
+
+export const getCurrentTabStatus = async (): Promise<Status | null> => {
+  const data = await getTabsStatusdata();
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab.id || !data) return null;
+  if (data[tab.id]) {
+    return data[tab.id];
+  }
+  return null;
+};
