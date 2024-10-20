@@ -1,10 +1,10 @@
-import { StepData } from "../../public/capture/main";
+// import { StepData } from "../../public/capture/main";
 import { UserData } from "@/types";
 import { Status, Theme } from "@/types";
 
 const TOKEN_NAME = "capture-extention-token";
 const STATUS_KEY = "capture-extention-status";
-const STEP_DATA_KEY = "capture-extention-step-data";
+// const STEP_DATA_KEY = "capture-extention-step-data";
 const USER_DATA_KEY = "capture-extention-user-data";
 const THEME_KEY = "capture-extention-ui-theme";
 
@@ -40,10 +40,6 @@ export const logOut = async () => {
     const newError = error as Error;
     throw new Error(newError.message);
   }
-};
-
-export const setData = async (data: StepData[]) => {
-  await chrome.storage?.sync.set({ [STEP_DATA_KEY]: data });
 };
 
 export const setUserTheme = async (theme: Theme) => {

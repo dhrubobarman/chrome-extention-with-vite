@@ -1,9 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  getCurrentTabStatus,
-  setCurrentTabStatus,
-  setData,
-} from "@/utils/storage";
+import { getCurrentTabStatus, setCurrentTabStatus } from "@/utils/storage";
 import { Save } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { StepData } from "../../../public/capture/main";
@@ -75,11 +71,7 @@ const StartCapture = () => {
           await handleDisableButton();
         }
         if (response === "data") {
-          setStepData((prev) => {
-            const newData = [...prev, ...data];
-            setData(newData);
-            return newData;
-          });
+          setStepData(data);
         }
       }
     });
@@ -120,7 +112,7 @@ const StartCapture = () => {
     chrome.tabs.sendMessage(tab.id, { action: "stop" });
   };
 
-  const handleSave = async () => {
+  const getData = async () => {
     const [tab] = await chrome.tabs.query({
       active: true,
       currentWindow: true,
@@ -132,6 +124,10 @@ const StartCapture = () => {
       css: css,
     });
     chrome.tabs.sendMessage(tab.id, { action: "sendStepData" });
+  };
+
+  const saveData = () => {
+    console.log(stepData);
   };
 
   return (
@@ -172,14 +168,14 @@ const StartCapture = () => {
           <Button
             variant={"outline"}
             disabled={buttonState.saveButton}
-            onClick={handleSave}
+            onClick={getData}
           >
             Get Data
           </Button>
           <Button
             variant={"secondary"}
             disabled={stepData.length === 0}
-            onClick={handleSave}
+            onClick={saveData}
           >
             <Save /> Save
           </Button>

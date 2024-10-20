@@ -49,7 +49,7 @@ const UserProfile = () => {
     <div>
       <DropdownMenu>
         <DropdownMenuTrigger>
-          <Avatar>
+          <Avatar className="dark:bg-[#4a4a50] dark:border-gray-300">
             <AvatarImage src={userData?.avatar} alt={userData?.name} />
             <AvatarFallback>
               {userData?.name

@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/card";
 import { setToken, setUser } from "@/utils/storage";
 import { useStore } from "@/providers/storageProvider";
+import { Logo } from "@/assets/logo";
 
 const FormSchema = z.object({
   email: z.string().email("User email is required"),
@@ -60,8 +61,11 @@ export default function LoginForm() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <Card className="w-[350px] border-none bg-transparent rounded-none shadow-none">
-          <CardHeader>
-            <CardTitle className="text-xl text-center">Login🔑</CardTitle>
+          <CardHeader className="pt-2">
+            <CardTitle className="text-xl text-center flex items-center justify-center">
+              <Logo className="max-h-[30px] !max-w-[129px]" />
+              🔑
+            </CardTitle>
             <CardDescription className="text-center">
               You need to login first to use capture library.
             </CardDescription>
